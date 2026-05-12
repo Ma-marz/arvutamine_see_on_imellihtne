@@ -860,11 +860,11 @@
       showScreen(currentScreen === "settings" ? "game" : "settings");
     });
 
-    minNumberAInput.addEventListener("input", () => syncPair(minNumberAInput, maxNumberAInput));
-    maxNumberAInput.addEventListener("input", () => syncPair(minNumberAInput, maxNumberAInput));
+    minNumberAInput.addEventListener("change", () => syncPair(minNumberAInput, maxNumberAInput));
+    maxNumberAInput.addEventListener("change", () => syncPair(minNumberAInput, maxNumberAInput));
 
-    minNumberBInput.addEventListener("input", () => syncPair(minNumberBInput, maxNumberBInput));
-    maxNumberBInput.addEventListener("input", () => syncPair(minNumberBInput, maxNumberBInput));
+    minNumberBInput.addEventListener("change", () => syncPair(minNumberBInput, maxNumberBInput));
+    maxNumberBInput.addEventListener("change", () => syncPair(minNumberBInput, maxNumberBInput));
 
     startButton.addEventListener("click", startGame);
     resetTopButton.addEventListener("click", startGame);
