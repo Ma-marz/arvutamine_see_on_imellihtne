@@ -536,12 +536,20 @@
 
           <div class="grid grid-2" style="margin-bottom: 18px;">
             <div>
-              <label for="minNumber">Väikseim arv</label>
-              <input id="minNumber" type="number" value="1" />
+              <label for="minNumberA">Esimese arvu väikseim väärtus</label>
+              <input id="minNumberA" type="number" value="1" />
             </div>
             <div>
-              <label for="maxNumber">Suurim arv</label>
-              <input id="maxNumber" type="number" value="10" />
+              <label for="maxNumberA">Esimese arvu suurim väärtus</label>
+              <input id="maxNumberA" type="number" value="5" />
+            </div>
+            <div>
+              <label for="minNumberB">Teise arvu väikseim väärtus</label>
+              <input id="minNumberB" type="number" value="1" />
+            </div>
+            <div>
+              <label for="maxNumberB">Teise arvu suurim väärtus</label>
+              <input id="maxNumberB" type="number" value="10" />
             </div>
           </div>
 
@@ -619,8 +627,10 @@
     const startButton = document.getElementById("startButton");
 
     const message = document.getElementById("message");
-    const minNumberInput = document.getElementById("minNumber");
-    const maxNumberInput = document.getElementById("maxNumber");
+    const minNumberAInput = document.getElementById("minNumberA");
+    const maxNumberAInput = document.getElementById("maxNumberA");
+    const minNumberBInput = document.getElementById("minNumberB");
+    const maxNumberBInput = document.getElementById("maxNumberB");
     const operationButtons = document.querySelectorAll(".operation[data-operation]");
     const negativeToggle = document.getElementById("negativeToggle");
     const questionElement = document.getElementById("question");
@@ -631,15 +641,15 @@
     const streakElement = document.getElementById("streak");
     const historyList = document.getElementById("historyList");
 
-    function syncNumberInputs() {
-      let min = Number(minNumberInput.value);
-      let max = Number(maxNumberInput.value);
+    function syncPair(minInput, maxInput) {
+      let min = Number(minInput.value);
+      let max = Number(maxInput.value);
 
       if (!Number.isFinite(min)) min = 1;
       if (!Number.isFinite(max)) max = 1;
 
       if (max < min) {
-        maxNumberInput.value = min;
+        maxInput.value = min;
       }
     }
 
@@ -677,16 +687,21 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function getRange() {
-      let min = Number(minNumberInput.value);
-      let max = Number(maxNumberInput.value);
-
-      if (!Number.isFinite(min)) min = 1;
-      if (!Number.isFinite(max)) max = 10;
+    function getRanges() {
+      const minA = Number(minNumberAInput.value) || 1;
+      const maxA = Number(maxNumberAInput.value) || 5;
+      const minB = Number(minNumberBInput.value) || 1;
+      const maxB = Number(maxNumberBInput.value) || 10;
 
       return {
-        min: Math.min(min, max),
-        max: Math.max(min, max)
+        a: {
+          min: Math.min(minA, maxA),
+          max: Math.max(minA, maxA)
+        },
+        b: {
+          min: Math.min(minB, maxB),
+          max: Math.max(minB, maxB)
+        }
       };
     }
 
@@ -699,11 +714,11 @@
     function makeQuestion() {
       const selectedOperations = getSelectedOperations();
       const operation = selectedOperations[randomInt(0, selectedOperations.length - 1)];
-      const range = getRange();
+      const ranges = getRanges();
       const allowNegative = negativeToggle.classList.contains("active");
 
-      let a = randomInt(range.min, range.max);
-      let b = randomInt(range.min, range.max);
+      let a = randomInt(ranges.a.min, ranges.a.max);
+      let b = randomInt(ranges.b.min, ranges.b.max);
       let text = "";
       let correctAnswer = 0;
 
@@ -714,7 +729,7 @@
 
       if (operation === "divide") {
         b = Math.max(1, b);
-        const result = randomInt(range.min, range.max);
+        const result = randomInt(ranges.b.min, ranges.b.max);
         a = b * result;
         text = `${a} ÷ ${b}`;
         correctAnswer = result;
@@ -845,8 +860,11 @@
       showScreen(currentScreen === "settings" ? "game" : "settings");
     });
 
-    minNumberInput.addEventListener("input", syncNumberInputs);
-    maxNumberInput.addEventListener("input", syncNumberInputs);
+    minNumberAInput.addEventListener("input", () => syncPair(minNumberAInput, maxNumberAInput));
+    maxNumberAInput.addEventListener("input", () => syncPair(minNumberAInput, maxNumberAInput));
+
+    minNumberBInput.addEventListener("input", () => syncPair(minNumberBInput, maxNumberBInput));
+    maxNumberBInput.addEventListener("input", () => syncPair(minNumberBInput, maxNumberBInput));
 
     startButton.addEventListener("click", startGame);
     resetTopButton.addEventListener("click", startGame);
