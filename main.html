@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matemaatika Terminal</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #050805;
+      color: #7CFF8A;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .terminal {
+      border: 1px solid #1f8f3a;
+      border-radius: 14px;
+      background: #020402;
+      box-shadow: 0 0 28px rgba(20, 255, 80, 0.08);
+      overflow: hidden;
+    }
+
+    .terminal.flash-correct {
+      animation: flashCorrect 420ms ease-out;
+    }
+
+    .terminal.flash-wrong {
+      animation: flashWrong 420ms ease-out;
+    }
+
+    @keyframes flashCorrect {
+      0% {
+        background: #0c3a14;
+        box-shadow: 0 0 42px rgba(80, 255, 110, 0.45);
+        border-color: #7CFF8A;
+      }
+      100% {
+        background: #020402;
+        box-shadow: 0 0 28px rgba(20, 255, 80, 0.08);
+        border-color: #1f8f3a;
+      }
+    }
+
+    @keyframes flashWrong {
+      0% {
+        background: #3a0c0c;
+        box-shadow: 0 0 42px rgba(255, 80, 80, 0.45);
+        border-color: #ff7878;
+      }
+      100% {
+        background: #020402;
+        box-shadow: 0 0 28px rgba(20, 255, 80, 0.08);
+        border-color: #1f8f3a;
+      }
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #145c29;
+      padding: 16px;
+      background: #071007;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: #3ecb5f;
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 18px;
+    }
+
+    .message {
+      border: 1px solid #145c29;
+      border-radius: 10px;
+      background: #071007;
+      padding: 12px;
+      min-height: 44px;
+      color: #9dffa7;
+      margin-bottom: 18px;
+    }
+
+    .message.error {
+      border-color: #ff7878;
+      background: #2a0707;
+      color: #ff9b9b;
+      box-shadow: 0 0 18px rgba(255, 80, 80, 0.18);
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    label {
+      display: block;
+      color: #baffc0;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #1f8f3a;
+      border-radius: 10px;
+      background: #020402;
+      color: #7CFF8A;
+      font-family: inherit;
+      font-size: 18px;
+      padding: 12px;
+      outline: none;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input:focus {
+      border-color: #7CFF8A;
+    }
+
+    button {
+      border: 1px solid #1f8f3a;
+      border-radius: 10px;
+      background: #071007;
+      color: #7CFF8A;
+      font-family: inherit;
+      font-weight: bold;
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0d1f0d;
+    }
+
+    .primary {
+      background: #29d14f;
+      color: #020402;
+      border-color: #29d14f;
+    }
+
+    .primary:hover {
+      background: #7CFF8A;
+    }
+
+    .operation {
+      text-align: left;
+      min-height: 86px;
+    }
+
+    .operation.active {
+      background: #0f2a12;
+      border-color: #7CFF8A;
+      color: #baffc0;
+    }
+
+    .symbol {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: #baffc0;
+      font-size: 18px;
+    }
+
+    .settings,
+    .game {
+      display: none;
+    }
+
+    .settings.active,
+    .game.active {
+      display: block;
+    }
+
+    .stats {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      border: 1px solid #145c29;
+      border-radius: 10px;
+      background: #071007;
+      padding: 12px;
+    }
+
+    .stat-label {
+      color: #3ecb5f;
+      font-size: 12px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .question-box {
+      border: 1px solid #1f8f3a;
+      border-radius: 14px;
+      background: #071007;
+      text-align: center;
+      padding: 28px 16px;
+      margin-bottom: 16px;
+    }
+
+    .question-label {
+      color: #3ecb5f;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .question {
+      font-size: clamp(42px, 9vw, 76px);
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .answer-row {
+      display: flex;
+      gap: 10px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .answer-row input {
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .actions button {
+      flex: 1;
+    }
+
+    .history {
+      border: 1px solid #145c29;
+      border-radius: 10px;
+      background: #071007;
+      padding: 12px;
+      height: 260px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #historyList {
+      overflow-y: auto;
+      flex: 1;
+      padding-right: 4px;
+    }
+
+    #historyList::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #historyList::-webkit-scrollbar-track {
+      background: #071007;
+    }
+
+    #historyList::-webkit-scrollbar-thumb {
+      background: #1f8f3a;
+      border-radius: 10px;
+    }
+
+    #historyList::-webkit-scrollbar-thumb:hover {
+      background: #29d14f;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #0e3218;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .history-row:last-child {
+      border-bottom: 0;
+    }
+
+    .ok {
+      color: #7CFF8A;
+    }
+
+    .bad {
+      color: #ff7878;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 12px;
+      }
+
+      .topbar,
+      .answer-row,
+      .actions {
+        flex-direction: column;
+      }
+
+      .grid-2,
+      .grid-3,
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="terminal">
+      <div class="topbar">
+        <div>
+          <h1 class="title">MATEMAATIKA TERMINAL</h1>
+          <p class="subtitle">Harjutusmäng korrutamise, jagamise, liitmise ja lahutamise jaoks</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="resetTopButton">ALUSTA UUESTI</button>
+          <button id="toggleScreenButton">MÄNG</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div id="message" class="message">&gt; Seadista vahemik ja vajuta ALUSTA.</div>
+
+        <section id="settingsScreen" class="settings active">
+          <h2 class="section-title">SEADISTUSED</h2>
+
+          <div class="grid grid-2" style="margin-bottom: 18px;">
+            <div>
+              <label for="minNumber">Väikseim arv</label>
+              <input id="minNumber" type="number" value="1" />
+            </div>
+            <div>
+              <label for="maxNumber">Suurim arv</label>
+              <input id="maxNumber" type="number" value="10" />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <button id="negativeToggle" class="operation">
+              <span class="symbol">±</span>
+              Negatiivsed vastused lubatud
+            </button>
+          </div>
+
+          <h3 class="section-title">Vali tehted</h3>
+          <div class="grid grid-4" style="margin-bottom: 18px;">
+            <button class="operation active" data-operation="multiply">
+              <span class="symbol">×</span>
+              Korrutamine
+            </button>
+            <button class="operation" data-operation="divide">
+              <span class="symbol">÷</span>
+              Jagamine
+            </button>
+            <button class="operation" data-operation="add">
+              <span class="symbol">+</span>
+              Liitmine
+            </button>
+            <button class="operation" data-operation="subtract">
+              <span class="symbol">−</span>
+              Lahutamine
+            </button>
+          </div>
+
+          <button class="primary" id="startButton" style="width: 100%; font-size: 18px; padding: 16px;">ALUSTA TREENINGUT</button>
+        </section>
+
+        <section id="gameScreen" class="game">
+          <div class="grid grid-3 stats">
+            <div class="stat-box">
+              <div class="stat-label">PUNKTID</div>
+              <div id="score" class="stat-value">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">TÄPSUS</div>
+              <div id="accuracy" class="stat-value">0%</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">JÄRJEST</div>
+              <div id="streak" class="stat-value">0</div>
+            </div>
+          </div>
+
+          <div class="question-box">
+            <div class="question-label">LAHENDA:</div>
+            <div id="question" class="question">--</div>
+
+            <form id="answerForm" class="answer-row">
+              <input id="answerInput" type="number" autocomplete="off" placeholder="sisesta vastus..." />
+              <button class="primary" type="submit">VASTA</button>
+            </form>
+          </div>
+
+          <div class="history">
+            <h3 class="section-title">VIIMASED VASTUSED</h3>
+            <div id="historyList">Vastuseid pole veel.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const terminal = document.querySelector(".terminal");
+    const settingsScreen = document.getElementById("settingsScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const toggleScreenButton = document.getElementById("toggleScreenButton");
+    const resetTopButton = document.getElementById("resetTopButton");
+    const startButton = document.getElementById("startButton");
+
+    const message = document.getElementById("message");
+    const minNumberInput = document.getElementById("minNumber");
+    const maxNumberInput = document.getElementById("maxNumber");
+    const operationButtons = document.querySelectorAll(".operation[data-operation]");
+    const negativeToggle = document.getElementById("negativeToggle");
+    const questionElement = document.getElementById("question");
+    const answerForm = document.getElementById("answerForm");
+    const answerInput = document.getElementById("answerInput");
+    const scoreElement = document.getElementById("score");
+    const accuracyElement = document.getElementById("accuracy");
+    const streakElement = document.getElementById("streak");
+    const historyList = document.getElementById("historyList");
+
+    function syncNumberInputs() {
+      let min = Number(minNumberInput.value);
+      let max = Number(maxNumberInput.value);
+
+      if (!Number.isFinite(min)) min = 1;
+      if (!Number.isFinite(max)) max = 1;
+
+      if (max < min) {
+        maxNumberInput.value = min;
+      }
+    }
+
+    let currentScreen = "settings";
+    let currentQuestion = null;
+    let score = 0;
+    let total = 0;
+    let streak = 0;
+    let history = [];
+
+    function showMessage(text, type = "normal") {
+      message.textContent = "> " + text;
+      message.classList.toggle("error", type === "error");
+    }
+
+    function flashConsole(type) {
+      terminal.classList.remove("flash-correct", "flash-wrong");
+      void terminal.offsetWidth;
+      terminal.classList.add(type === "correct" ? "flash-correct" : "flash-wrong");
+    }
+
+    function showScreen(screen) {
+      currentScreen = screen;
+      settingsScreen.classList.toggle("active", screen === "settings");
+      gameScreen.classList.toggle("active", screen === "game");
+      toggleScreenButton.textContent = screen === "settings" ? "MÄNG" : "SEADISTUSED";
+      resetTopButton.style.display = screen === "settings" ? "none" : "block";
+
+      if (screen === "game") {
+        answerInput.focus();
+      }
+    }
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRange() {
+      let min = Number(minNumberInput.value);
+      let max = Number(maxNumberInput.value);
+
+      if (!Number.isFinite(min)) min = 1;
+      if (!Number.isFinite(max)) max = 10;
+
+      return {
+        min: Math.min(min, max),
+        max: Math.max(min, max)
+      };
+    }
+
+    function getSelectedOperations() {
+      return Array.from(operationButtons)
+        .filter(button => button.classList.contains("active"))
+        .map(button => button.dataset.operation);
+    }
+
+    function makeQuestion() {
+      const selectedOperations = getSelectedOperations();
+      const operation = selectedOperations[randomInt(0, selectedOperations.length - 1)];
+      const range = getRange();
+      const allowNegative = negativeToggle.classList.contains("active");
+
+      let a = randomInt(range.min, range.max);
+      let b = randomInt(range.min, range.max);
+      let text = "";
+      let correctAnswer = 0;
+
+      if (operation === "multiply") {
+        text = `${a} × ${b}`;
+        correctAnswer = a * b;
+      }
+
+      if (operation === "divide") {
+        b = Math.max(1, b);
+        const result = randomInt(range.min, range.max);
+        a = b * result;
+        text = `${a} ÷ ${b}`;
+        correctAnswer = result;
+      }
+
+      if (operation === "add") {
+        text = `${a} + ${b}`;
+        correctAnswer = a + b;
+      }
+
+      if (operation === "subtract") {
+        if (allowNegative) {
+          text = `${a} − ${b}`;
+          correctAnswer = a - b;
+        } else {
+          const bigger = Math.max(a, b);
+          const smaller = Math.min(a, b);
+          text = `${bigger} − ${smaller}`;
+          correctAnswer = bigger - smaller;
+        }
+      }
+
+      return { text, correctAnswer };
+    }
+
+    function updateStats() {
+      scoreElement.textContent = score;
+      streakElement.textContent = streak;
+      accuracyElement.textContent = total === 0 ? "0%" : Math.round((score / total) * 100) + "%";
+    }
+
+    function updateHistory() {
+      if (history.length === 0) {
+        historyList.textContent = "Vastuseid pole veel.";
+        return;
+      }
+
+      historyList.innerHTML = history.map(item => `
+        <div class="history-row">
+          <span>${item.question} = ${item.userAnswer}</span>
+          <span class="${item.correct ? "ok" : "bad"}">
+            ${item.correct ? "ÕIGE" : "VALE, õige: " + item.correctAnswer}
+          </span>
+        </div>
+      `).join("");
+    }
+
+    function nextQuestion() {
+      currentQuestion = makeQuestion();
+      questionElement.textContent = currentQuestion.text;
+      answerInput.value = "";
+      answerInput.focus();
+    }
+
+    function startGame() {
+      const selectedOperations = getSelectedOperations();
+
+      if (selectedOperations.length === 0) {
+        flashConsole("wrong");
+        showMessage("VIGA: vali vähemalt üks tehe.", "error");
+        return;
+      }
+
+      score = 0;
+      total = 0;
+      streak = 0;
+      history = [];
+
+      updateStats();
+      updateHistory();
+      showScreen("game");
+      showMessage("Treening algas. Sisesta vastus ja vajuta ENTER.");
+      nextQuestion();
+    }
+
+    function submitAnswer(event) {
+      event.preventDefault();
+
+      if (!currentQuestion) return;
+
+      const userAnswer = Number(answerInput.value);
+
+      if (!Number.isFinite(userAnswer)) {
+        flashConsole("wrong");
+        showMessage("VIGA: sisesta palun number.", "error");
+        return;
+      }
+
+      const correct = userAnswer === currentQuestion.correctAnswer;
+      total++;
+
+      if (correct) {
+        score++;
+        streak++;
+        flashConsole("correct");
+        showMessage(`Õige! Said ühe punkti. Järjest õigeid vastuseid: ${streak}.`);
+      } else {
+        streak = 0;
+        flashConsole("wrong");
+        showMessage(`Vale. Õige vastus oli ${currentQuestion.correctAnswer}.`);
+      }
+
+      history.unshift({
+        question: currentQuestion.text,
+        userAnswer,
+        correctAnswer: currentQuestion.correctAnswer,
+        correct
+      });
+
+      history = history.slice(0, 8);
+
+      updateStats();
+      updateHistory();
+      nextQuestion();
+    }
+
+    operationButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        button.classList.toggle("active");
+      });
+    });
+
+    negativeToggle.addEventListener("click", () => {
+      negativeToggle.classList.toggle("active");
+    });
+
+    toggleScreenButton.addEventListener("click", () => {
+      showScreen(currentScreen === "settings" ? "game" : "settings");
+    });
+
+    minNumberInput.addEventListener("input", syncNumberInputs);
+    maxNumberInput.addEventListener("input", syncNumberInputs);
+
+    startButton.addEventListener("click", startGame);
+    resetTopButton.addEventListener("click", startGame);
+    answerForm.addEventListener("submit", submitAnswer);
+  </script>
+</body>
+</html>
