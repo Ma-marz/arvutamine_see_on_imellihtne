@@ -341,23 +341,175 @@
 
     @media (max-width: 700px) {
       body {
-        padding: 12px;
+        min-height: 100dvh;
+        padding: 8px;
+        align-items: center;
       }
 
-      .topbar,
-      .answer-row,
-      .actions {
-        flex-direction: column;
+      .container {
+        max-width: none;
       }
 
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr;
+      .terminal {
+        border-radius: 10px;
       }
 
-      .topbar button {
-        width: 100%;
+      .topbar {
+        gap: 8px;
+        padding: 10px;
+      }
+
+      .topbar > div:last-child {
+        display: flex !important;
+        gap: 6px !important;
+        flex-shrink: 0;
+      }
+
+      .title {
+        font-size: clamp(15px, 4.8vw, 21px);
+        line-height: 1.1;
+        letter-spacing: 0.5px;
+      }
+
+      .subtitle {
+        font-size: clamp(9px, 2.5vw, 12px);
+        line-height: 1.2;
+      }
+
+      .content {
+        padding: 10px;
+      }
+
+      .message {
+        font-size: clamp(10px, 2.8vw, 13px);
+        padding: 8px;
+        min-height: 36px;
+        margin-bottom: 10px;
+      }
+
+      .grid {
+        gap: 8px;
+      }
+
+      label {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+
+      input,
+      button {
+        font-size: clamp(10px, 2.8vw, 14px);
+        padding: 8px 9px;
+        border-radius: 8px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        margin-bottom: 7px;
+      }
+
+      .operation {
+        min-height: 62px;
+      }
+
+      .symbol {
+        font-size: 21px;
+        margin-bottom: 2px;
+      }
+
+      .stats {
+        margin-bottom: 10px;
+      }
+
+      .stat-box {
+        padding: 8px 5px;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .stat-value {
+        font-size: clamp(18px, 6vw, 24px);
+      }
+
+      .question-box {
+        padding: 16px 10px;
+        margin-bottom: 10px;
+      }
+
+      .question-label {
+        font-size: 10px;
+        margin-bottom: 6px;
+      }
+
+      .question {
+        font-size: clamp(36px, 13vw, 60px);
+        margin-bottom: 12px;
+      }
+
+      .answer-row {
+        gap: 7px;
+        max-width: 420px;
+      }
+
+      .answer-row input {
+        font-size: clamp(17px, 5vw, 22px);
+      }
+
+      .history {
+        height: 160px;
+        padding: 8px;
+      }
+
+      .history-row {
+        gap: 8px;
+        padding: 6px 0;
+        font-size: clamp(10px, 2.8vw, 12px);
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        padding: 5px;
+      }
+
+      .topbar {
+        padding: 8px;
+        gap: 6px;
+      }
+
+      .topbar > div:last-child {
+        gap: 4px !important;
+      }
+
+      .content {
+        padding: 8px;
+      }
+
+      input,
+      button {
+        padding: 7px 6px;
+      }
+
+      .operation {
+        min-height: 54px;
+      }
+
+      .symbol {
+        font-size: 18px;
+      }
+
+      .question-box {
+        padding: 12px 8px;
+      }
+
+      .question {
+        font-size: clamp(32px, 12vw, 48px);
+      }
+
+      .history {
+        height: 130px;
       }
     }
   </style>
